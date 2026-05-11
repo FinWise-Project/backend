@@ -7,7 +7,7 @@ const response = (res, statusCode, message, data) => {
       message,
       data,
     })
-    .end()
+    .end();
 };
 
 export default response;

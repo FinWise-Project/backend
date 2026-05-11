@@ -11,10 +11,6 @@ const TokenManager = {
     jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
       expiresIn: '7d', // biasanya lebih lama dari access token
     }),
-  // generateAccessToken: (payload) =>
-  //   jwt.sign(payload, process.env.ACCESS_TOKEN_KEY),
-  // generateRefreshToken: (payload) =>
-  //   jwt.sign(payload, process.env.REFRESH_TOKEN_KEY),
   verifyRefreshToken: (refreshToken) => {
     try {
       const payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
@@ -33,4 +29,4 @@ const TokenManager = {
   },
 };
 
-export default TokenManager
+export default TokenManager;
