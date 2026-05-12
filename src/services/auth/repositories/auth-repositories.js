@@ -1,13 +1,9 @@
 import { nanoid } from 'nanoid';
-import { Pool } from 'pg';
+import { pool } from '../../../database/pool.js';
 import bcrypt from 'bcrypt';
 import AuthorizationError from '../../../exceptions/authorization-error.js';
 
 class AuthRepositories {
-  constructor() {
-    this._pool = new Pool();
-  }
-
   async createUser({ name, email, password, phone }) {
     const id = `user-${nanoid(16)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -24,7 +20,7 @@ class AuthRepositories {
       values: [id, name, email, hashedPassword, phone, avatarInitial, createdAt, updatedAt],
     };
 
-    const result = await this._pool.query(query);
+    const result = await pool.query(query);
     return result.rows[0];
   }
 
@@ -38,7 +34,7 @@ class AuthRepositories {
       values: [email],
     };
 
-    const user = await this._pool.query(query);
+    const user = await pool.query(query);
 
     if (!user.rows.length) {
       throw new AuthorizationError('User tidak ditemukan');
@@ -63,7 +59,7 @@ class AuthRepositories {
       values: [username],
     };
 
-    const result = await this._pool.query(query);
+    const result = await pool.query(query);
     return result.rows.length > 0;
   }
 
@@ -77,7 +73,7 @@ class AuthRepositories {
       values: [email],
     };
 
-    const result = await this._pool.query(query);
+    const result = await pool.query(query);
     return result.rows.length > 0;
   }
 
@@ -93,7 +89,7 @@ class AuthRepositories {
       values: [id, token, userId, expiredAt, createdAt],
     };
 
-    await this._pool.query(query);
+    await pool.query(query);
   }
 
   async deleteRefreshToken(token) {
@@ -105,7 +101,7 @@ class AuthRepositories {
       values: [token],
     };
 
-    await this._pool.query(query);
+    await pool.query(query);
   }
 
   async verifyRefreshToken(token) {
@@ -118,7 +114,7 @@ class AuthRepositories {
       values: [token],
     };
 
-    const result = await this._pool.query(query);
+    const result = await pool.query(query);
     if (!result.rows.length) {
       throw new AuthorizationError('Refresh token tidak valid');
     }
