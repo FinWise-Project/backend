@@ -7,5 +7,6 @@ export const subCategoryPayloadSchema = Joi.object({
 
 export const subCategoryQuerySchema = Joi.object({
   categoryId: Joi.string().empty(),
-  name: Joi.string().empty(),
+  categoryName: Joi.string().empty(),
+  subCategoryName: Joi.string().empty(),
 });
