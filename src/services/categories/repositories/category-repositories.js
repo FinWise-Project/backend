@@ -35,17 +35,33 @@ class CategoryRepositories {
     return result.rows.length > 0;
   }
 
-  async getCategory() {
+  async getCategory({ categoryId, categoryName }) {
     const query = {
       text: `
-      SELECT id, name
-      FROM categories
+        SELECT id, name
+        FROM categories
+        WHERE 1=1
       `,
+      values: [],
     };
+
+    // filter by ID
+    if (categoryId) {
+      query.values.push(categoryId);
+      query.text += ` AND id = $${query.values.length}`;
+    }
+
+    // filter by name (search)
+    if (categoryName) {
+      query.values.push(`%${categoryName.toLowerCase()}%`);
+      query.text += ` AND LOWER(name) LIKE $${query.values.length}`;
+    }
+
+    query.text += ` ORDER BY name ASC`;
 
     const result = await pool.query(query);
     return result.rows;
-  };
+  }
 
   async getCategoryById(id) {
     const query = {

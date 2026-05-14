@@ -8,83 +8,71 @@ export const createSubCategory = async (req, res, next) => {
   const { categoryId } = req.body;
   const userId = req.user.id;
 
-  const isCategotyExist = await SubCategoryRepositories.verifyNewSubCategory(name);
+  const isSubCategotyExist = await SubCategoryRepositories.verifyNewSubCategory(name);
 
-  if (isCategotyExist) {
+  if (isSubCategotyExist) {
     throw new InvariantError('nama sub kategori sudah digunakan');
   }
 
-  const category = await SubCategoryRepositories.createSubCategory({
+  const subCategory = await SubCategoryRepositories.createSubCategory({
     userId,
     categoryId,
     name,
   });
 
-  if (!category) {
+  if (!subCategory) {
     return next(new InvariantError('sub kategori gagal ditambahkan'));
   }
 
   return response(res, 201, 'sub kategori berhasil ditambahkan', {
-    id: category.id,
+    id: subCategory.id,
   });
 };
 
-export const getSubCategories = async (req, res, next) => {
-  const categories = await SubCategoryRepositories.getSubCategory();
+export const getSubCategories = async (req, res) => {
+  const { categoryName, subCategoryName, categoryId } = req.query;
 
-  if (!categories) {
-    return next(new NotFoundError('data sub kategori kosong'));
-  }
+  const subCategories = await SubCategoryRepositories.getSubCategory({ categoryName, subCategoryName, categoryId });
 
-  return response(res, 200, 'berhasil mengambil data sub kategori', { categories });
+  return response(res, 200, 'berhasil mengambil data sub kategori', { subCategories });
 };
 
 export const getSubCategoryById = async (req, res, next) => {
   const { id } = req.params;
 
-  const category = await SubCategoryRepositories.getSubCategoryById(id);
+  const subCategory = await SubCategoryRepositories.getSubCategoryById(id);
 
-  if (!category) {
+  if (!subCategory) {
     return next(new NotFoundError('data sub kategori tidak ditemukan'));
   }
 
-  return response(res, 200, 'berhasil mengambil data sub kategori', { category });
-};
-
-export const getSubCategoryByCategory = async (req, res) => {
-  const { categoryId } = req.params;
-
-  const subCategories =await SubCategoryRepositories.getSubCategoryByCategoryId(categoryId);
-
-  return response(res, 200, 'berhasil mengambil sub kategori', {
-    subCategories,
-  });
+  return response(res, 200, 'berhasil mengambil data sub kategori', { subCategory });
 };
 
 export const editSubCategory = async (req, res, next) => {
   const { id } = req.params;
   const { name } = req.validated;
 
-  const category = await SubCategoryRepositories.editSubCategory({
+  const subCategory = await SubCategoryRepositories.editSubCategory({
     id,
     name,
   });
 
-  if (!category) {
+  if (!subCategory) {
     return next(new InvariantError('sub kategori gagal diperbarui'));
   }
 
-  return response(res, 200, 'sub kategori berhasil diperbarui', category);
+  return response(res, 200, 'sub kategori berhasil diperbarui', subCategory);
 };
 
 export const deleteSubCategory = async (req, res, next) => {
   const { id } = req.params;
 
-  const category = await SubCategoryRepositories.deleteSubCategory(id);
+  const subCategory = await SubCategoryRepositories.deleteSubCategory(id);
 
-  if (!category) {
+  if (!subCategory) {
     return next(new InvariantError('sub kategori gagal dihapus'));
   }
 
-  return response(res, 200, 'sub kategori berhasil dihapus', category);
+  return response(res, 200, 'sub kategori berhasil dihapus', subCategory);
 };

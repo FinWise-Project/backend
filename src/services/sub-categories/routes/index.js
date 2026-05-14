@@ -3,7 +3,6 @@ import {
   createSubCategory,
   getSubCategories,
   getSubCategoryById,
-  getSubCategoryByCategory,
   editSubCategory,
   deleteSubCategory,
 } from '../controller/sub-category-controller.js';
@@ -14,9 +13,8 @@ import authenticateToken from '../../../middlewares/auth.js';
 
 const router = express.Router();
 
-router.get('/sub-categories', validateQuery(subCategoryQuerySchema), getSubCategories);
+router.get('/sub-categories', validateQuery(subCategoryQuerySchema), getSubCategories);//query params
 router.get('/sub-categories/:id', getSubCategoryById);
-router.get('/categories/:categoryId/sub-categories', getSubCategoryByCategory);
 router.post('/sub-categories', authenticateToken, validate(subCategoryPayloadSchema), createSubCategory);
 router.put('/sub-categories/:id', authenticateToken, validate(subCategoryPayloadSchema), editSubCategory);
 router.delete('/sub-categories/:id', authenticateToken, deleteSubCategory);

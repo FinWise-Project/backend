@@ -35,7 +35,7 @@ class SubCategoryRepositories {
     return result.rows.length > 0;
   }
 
-  async getSubCategory() {
+  async getSubCategory({ categoryName, subCategoryName, categoryId }) {
     const query = {
       text: `
         SELECT 
@@ -44,8 +44,31 @@ class SubCategoryRepositories {
           c.name AS category_name
         FROM sub_categories sc
         JOIN categories c ON sc.category_id = c.id
+        WHERE 1=1
       `,
+      values: [],
     };
+
+    //filter berdasarkan nama category
+    if (categoryName) {
+      query.values.push(`%${categoryName.toLowerCase()}%`);
+      query.text += ` AND LOWER(c.name) LIKE $${query.values.length}`;
+    }
+
+    //optional: filter nama subcategory juga
+    if (subCategoryName) {
+      query.values.push(`%${subCategoryName.toLowerCase()}%`);
+      query.text += ` AND LOWER(sc.name) LIKE $${query.values.length}`;
+    }
+
+    // filter berdasarkan id category
+    if (categoryId) {
+      query.values.push(categoryId);
+      query.text += ` AND sc.category_id = $${query.values.length}`;
+    }
+
+    // sorting biar rapi
+    query.text += ` ORDER BY sc.name ASC`;
 
     const result = await pool.query(query);
     return result.rows;
@@ -65,20 +88,6 @@ class SubCategoryRepositories {
 
     return result.rows[0];
   };
-
-  async getSubCategoryByCategoryId(categoryId) {
-    const query = {
-      text: `
-        SELECT id, name
-        FROM sub_categories
-        WHERE category_id = $1
-      `,
-      values: [categoryId],
-    };
-
-    const result = await pool.query(query);
-    return result.rows;
-  }
 
   async editSubCategory({ id, name }) {
     const updatedAt = new Date().toISOString();

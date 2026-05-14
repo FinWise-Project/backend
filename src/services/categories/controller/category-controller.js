@@ -27,12 +27,10 @@ export const createCategory = async (req, res, next) => {
   });
 };
 
-export const getCategories = async (req, res, next) => {
-  const categories = await CategoryRepositories.getCategory();
+export const getCategories = async (req, res) => {
+  const { categoryId, categoryName } = req.query;
 
-  if (!categories) {
-    return next(new NotFoundError('data kategori kosong'));
-  }
+  const categories = await CategoryRepositories.getCategory({ categoryId, categoryName });
 
   return response(res, 200, 'berhasil mengambil data kategori', { categories });
 };
