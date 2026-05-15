@@ -5,6 +5,6 @@ export const categoryPayloadSchema = Joi.object({
 });
 
 export const categoryQuerySchema = Joi.object({
-  categoryId: Joi.string().empty(),
-  categoryName: Joi.string().empty(),
+  categoryId: Joi.string().allow('').optional(),
+  categoryName: Joi.string().allow('').optional(),
 });
